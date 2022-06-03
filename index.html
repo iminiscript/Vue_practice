@@ -2,25 +2,61 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>A First App</title>
-        <link rel="stylesheet" href="styles.css" />
+        <title>Todo List App</title>
+        <link rel="stylesheet" href="main.css" />
     </head>
+
     <body>
         <div id="app">
-            <div>
-                <label for="goal">Goal</label>
-                <input type="text" id="goal" v-model="enterValue" />
-                <button @click="addGoals">Add Goal</button>
+            <div class="header">
+                <h1>{{ header }}</h1>
+                <button
+                    v-if="cancling"
+                    @click="doCancle(false)"
+                    class="btn btn-cancel"
+                >
+                    Cancel
+                </button>
+                <button v-else @click="doCancle(true)" class="btn btn-primry">
+                    Add Item
+                </button>
             </div>
+
+            <div v-if="cancling" class="add-item-form">
+                <input
+                    @keyup.enter="addTodo"
+                    type="text"
+                    v-model="newItem"
+                    placeholder="Add a Todo"
+                />
+                <label>
+                    <input type="checkbox" v-model="highPriority" />
+                    High Priority
+                </label>
+                <button @click="addTodo" class="btn btn-primary">
+                    Add Todo
+                </button>
+            </div>
+            <p v-if="items.length === 0">
+                You've nothing to do, Please add some tasks!
+            </p>
             <ul>
                 <li
-                    v-for="goal in goals"
-                    :key="goal"
-                    :class="{crossoff: goal.completed}"
-                    @click="togglePurchased(goal)"
+                    v-for="item in reversedItems"
+                    @click="togglePurchased(item)"
+                    :key="item.id"
+                    class="static-class"
+                    :class="{crossoff: item.completed, priority: item.highPriority}"
                 >
-                    <p>{{ goal.label }}</p>
+                    <span> {{item.label}} </span>
+
+                    <button @click="removeItem(item)" class="btn btn-delete">
+                        Delete
+                    </button>
+
+                    <!-- <button @click="editItem(item)" class="btn btn-edit">
+                        Edit
+                    </button> -->
                 </li>
             </ul>
         </div>
